@@ -1,0 +1,63 @@
+{
+  "_from": "scheduler@0.21.0-alpha-b9964684b-20210824",
+  "_id": "scheduler@0.21.0-alpha-b9964684b-20210824",
+  "_inBundle": false,
+  "_integrity": "sha1-cd7AEmSfubO6bhAqJkGg+WAK4rU=",
+  "_location": "/scheduler",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "scheduler@0.21.0-alpha-b9964684b-20210824",
+    "name": "scheduler",
+    "escapedName": "scheduler",
+    "rawSpec": "0.21.0-alpha-b9964684b-20210824",
+    "saveSpec": null,
+    "fetchSpec": "0.21.0-alpha-b9964684b-20210824"
+  },
+  "_requiredBy": [
+    "/react-dom"
+  ],
+  "_resolved": "https://registry.nlark.com/scheduler/download/scheduler-0.21.0-alpha-b9964684b-20210824.tgz?cache=0&sync_timestamp=1629908887031&other_urls=https%3A%2F%2Fregistry.nlark.com%2Fscheduler%2Fdownload%2Fscheduler-0.21.0-alpha-b9964684b-20210824.tgz",
+  "_shasum": "71dec012649fb9b3ba6e102a2641a0f9600ae2b5",
+  "_spec": "scheduler@0.21.0-alpha-b9964684b-20210824",
+  "_where": "/Users/sc/Documents/learn-react18/node_modules/react-dom",
+  "browserify": {
+    "transform": [
+      "loose-envify"
+    ]
+  },
+  "bugs": {
+    "url": "https://github.com/facebook/react/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "loose-envify": "^1.1.0",
+    "object-assign": "^4.1.1"
+  },
+  "deprecated": false,
+  "description": "Cooperative scheduler for the browser environment.",
+  "files": [
+    "LICENSE",
+    "README.md",
+    "build-info.json",
+    "index.js",
+    "unstable_mock.js",
+    "unstable_post_task.js",
+    "cjs/",
+    "umd/"
+  ],
+  "homepage": "https://reactjs.org/",
+  "keywords": [
+    "react"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "name": "scheduler",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/facebook/react.git",
+    "directory": "packages/scheduler"
+  },
+  "version": "0.21.0-alpha-b9964684b-20210824"
+}
