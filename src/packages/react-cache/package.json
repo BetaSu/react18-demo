@@ -1,0 +1,49 @@
+{
+  "_from": "react-cache",
+  "_id": "react-cache@2.0.0-alpha.1",
+  "_inBundle": false,
+  "_integrity": "sha512-dDJVVGvxAlZE/dMxDXaxU5ZfcE4fbaSmJVFrCTi6dYWXDp7YjCsnywkpEYG6IURVW+eJrCydAIDcW0FADw0/5w==",
+  "_location": "/react-cache",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "react-cache",
+    "name": "react-cache",
+    "escapedName": "react-cache",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#DEV:/",
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/react-cache/-/react-cache-2.0.0-alpha.1.tgz",
+  "_shasum": "4c119188248bc988a61268458bc18bd845f2ec19",
+  "_spec": "react-cache",
+  "_where": "/Users/sc/Documents/react18-demo",
+  "bugs": {
+    "url": "https://github.com/facebook/react/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "A basic cache for React applications",
+  "files": [
+    "LICENSE",
+    "README.md",
+    "index.js",
+    "cjs/",
+    "umd/"
+  ],
+  "homepage": "https://github.com/facebook/react#readme",
+  "name": "react-cache",
+  "peerDependencies": {
+    "react": "^16.3.0-alpha.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/facebook/react.git"
+  },
+  "version": "2.0.0-alpha.1"
+}

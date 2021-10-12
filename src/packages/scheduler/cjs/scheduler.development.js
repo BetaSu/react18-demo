@@ -611,5 +611,6 @@ exports.unstable_runWithPriority = unstable_runWithPriority;
 exports.unstable_scheduleCallback = unstable_scheduleCallback;
 exports.unstable_shouldYield = shouldYieldToHost;
 exports.unstable_wrapCallback = unstable_wrapCallback;
+exports.from = 'src/packages';
   })();
 }

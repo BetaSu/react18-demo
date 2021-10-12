@@ -1,0 +1,10 @@
+{
+  "description": "这个包是为了打印React内部信息用的",
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "license": "MIT",
+  "main": "index.ts",
+  "name": "log",
+  "version": "0.0.1"
+}

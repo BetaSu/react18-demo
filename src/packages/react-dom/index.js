@@ -1,5 +1,5 @@
 'use strict';
-console.log('in~')
+
 function checkDCE() {
   /* global __REACT_DEVTOOLS_GLOBAL_HOOK__ */
   if (

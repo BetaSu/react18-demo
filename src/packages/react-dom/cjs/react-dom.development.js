@@ -17,6 +17,10 @@ var React = require('react');
 var _assign = require('object-assign');
 var Scheduler = require('scheduler');
 
+// 卡颂添加的log
+const {logHook} = require('log');
+
+
 var ReactSharedInternals = React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
 
 // by calls to these methods by a Babel plugin.
@@ -18108,6 +18112,8 @@ function attachPingListener(root, wakeable, lanes) {
   var pingCache = root.pingCache;
   var threadIDs;
 
+  logHook('attachPingListener', root, wakeable, lanes);
+
   if (pingCache === null) {
     pingCache = root.pingCache = new PossiblyWeakMap$2();
     threadIDs = new Set();
@@ -24608,8 +24614,9 @@ function ensureRootIsScheduled(root, currentTime) {
     return;
   } // We use the highest priority lane to represent the priority of the callback.
 
-
   var newCallbackPriority = getHighestPriorityLane(nextLanes); // Check if there's an existing task. We may be able to reuse it.
+
+  logHook('ensureRootIsScheduled', nextLanes, newCallbackPriority);
 
   var existingCallbackPriority = root.callbackPriority;
 
@@ -24733,7 +24740,7 @@ function performConcurrentWorkOnRoot(root, didTimeout) {
 
 
   var lanes = getNextLanes(root, root === workInProgressRoot ? workInProgressRootRenderLanes : NoLanes);
-
+  logHook('performe work, next lanes', lanes);
   if (lanes === NoLanes) {
     // Defensive coding. This is never expected to happen.
     return null;
@@ -28455,5 +28462,6 @@ exports.unmountComponentAtNode = unmountComponentAtNode;
 exports.unstable_batchedUpdates = batchedUpdates$1;
 exports.unstable_renderSubtreeIntoContainer = renderSubtreeIntoContainer;
 exports.version = ReactVersion;
+exports.from = 'src/packages';
   })();
 }

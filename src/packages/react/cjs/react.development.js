@@ -2648,5 +2648,6 @@ exports.useRef = useRef;
 exports.useState = useState;
 exports.useTransition = useTransition;
 exports.version = ReactVersion;
+exports.from = 'src/packages';
   })();
 }
