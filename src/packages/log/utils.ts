@@ -51,6 +51,18 @@ export const createCounter = (initialCount = 0) => {
   }
 }
 
+// perform work 完成时的状态
+export const exitStatus2Str = (exitStatus: number) => {
+  return [
+    'RootIncomplete',
+    'RootFatalErrored',
+    'RootErrored',
+    'RootSuspended',
+    'RootSuspendedWithDelay',
+    'RootCompleted'
+  ][exitStatus];
+}
+
 export const lanes2Str = (lanes: number) => {
   const str = lanes.toString(2);
   return str.split('').reverse().reduce((prev, cur, i) => {

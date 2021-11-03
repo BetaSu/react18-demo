@@ -5356,6 +5356,8 @@ function markRootSuspended(root, suspendedLanes) {
   root.suspendedLanes |= suspendedLanes;
   root.pingedLanes &= ~suspendedLanes; // The suspended lanes are no longer CPU-bound. Clear their expiration times.
 
+  logHook('markRootSuspended', suspendedLanes, root.suspendedLanes, root.pingedLanes)
+
   var expirationTimes = root.expirationTimes;
   var lanes = suspendedLanes;
 
@@ -5368,6 +5370,8 @@ function markRootSuspended(root, suspendedLanes) {
 }
 function markRootPinged(root, pingedLanes, eventTime) {
   root.pingedLanes |= root.suspendedLanes & pingedLanes;
+
+  logHook('markRootPinged', root.pingedLanes)
 }
 function markRootMutableRead(root, updateLane) {
   root.mutableReadLanes |= updateLane & root.pendingLanes;
@@ -24754,6 +24758,8 @@ function performConcurrentWorkOnRoot(root, didTimeout) {
 
   var exitStatus = shouldTimeSlice(root, lanes) && ( !didTimeout) ? renderRootConcurrent(root, lanes) : renderRootSync(root, lanes);
 
+  logHook('performConcurrentWorkOnRoot-exitStatus', exitStatus);
+
   if (exitStatus !== RootIncomplete) {
     if (exitStatus === RootErrored) {
       var prevExecutionContext = executionContext;
@@ -24967,6 +24973,8 @@ function performSyncWorkOnRoot(root) {
   }
 
   var exitStatus = renderRootSync(root, lanes);
+
+  logHook('performSyncWorkOnRoot-exitStatus', exitStatus);
 
   if (root.tag !== LegacyRoot && exitStatus === RootErrored) {
     var prevExecutionContext = executionContext;
@@ -26037,6 +26045,8 @@ function retryTimedOutBoundary(boundaryFiber, retryLane) {
 
   var eventTime = requestEventTime();
   var root = markUpdateLaneFromFiberToRoot(boundaryFiber, retryLane);
+
+  logHook('retryTimedOutBoundary', retryLane)
 
   if (root !== null) {
     markRootUpdated(root, retryLane, eventTime);
