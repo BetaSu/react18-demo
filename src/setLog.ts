@@ -10,7 +10,7 @@ bindHook('ensureRootIsScheduled', (lanes, lane) => {
 //   log('#727205', 'performe work, next lanes', lanes);
 // })
 
-bindHook('attachPingListener', (root, wakeable, lanes) => {
+bindHook('attachWakeableListeners', (root, wakeable, lanes) => {
   log('#327205', '设置一个ping', wakeable);
   log('#327205', 'ping优先级为', lanes2Str(lanes));
 })
@@ -33,4 +33,12 @@ bindHook('performConcurrentWorkOnRoot-exitStatus', (exitStatus: number) => {
 
 bindHook('performSyncWorkOnRoot-exitStatus', (exitStatus: number) => {
   log('#ffd322', 'perform Sync work 完成状态', exitStatus2Str(exitStatus));
+})
+
+bindHook('schedule callback', (type, cbName, lane) => {
+  utils.log('#327205', `调度root，类型：${type}，回调：`, cbName);
+})
+
+bindHook('updateDOMProperties', (dom, type) => {
+  utils.log('#727205', `更新DOM ${type}`, dom);
 })

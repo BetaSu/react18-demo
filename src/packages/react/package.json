@@ -1,28 +1,28 @@
 {
-  "_from": "react@alpha",
-  "_id": "react@18.0.0-alpha-b9964684b-20210824",
+  "_from": "react@beta",
+  "_id": "react@18.0.0-beta-96ca8d915-20211115",
   "_inBundle": false,
-  "_integrity": "sha1-bUwGPxP8Vv2GtRkwBJzrW4k8k3s=",
+  "_integrity": "sha512-Io6qvToVSO1UWNWbJSH16gbgYTkseSbfpQvLaB7JPutt0QVvjpUlEE0nfmww77CFdawxGkyfm/x4zvNTlMkHsw==",
   "_location": "/react",
   "_phantomChildren": {},
   "_requested": {
     "type": "tag",
     "registry": true,
-    "raw": "react@alpha",
+    "raw": "react@beta",
     "name": "react",
     "escapedName": "react",
-    "rawSpec": "alpha",
+    "rawSpec": "beta",
     "saveSpec": null,
-    "fetchSpec": "alpha"
+    "fetchSpec": "beta"
   },
   "_requiredBy": [
     "#USER",
     "/"
   ],
-  "_resolved": "https://registry.nlark.com/react/download/react-18.0.0-alpha-b9964684b-20210824.tgz",
-  "_shasum": "6d4c063f13fc56fd86b51930049ceb5b893c937b",
-  "_spec": "react@alpha",
-  "_where": "/Users/sc/Documents/learn-react18",
+  "_resolved": "https://registry.npmjs.org/react/-/react-18.0.0-beta-96ca8d915-20211115.tgz",
+  "_shasum": "0b2a0cd808b85fdce987a0c254e0fab979a3828d",
+  "_spec": "react@beta",
+  "_where": "/Users/sc/Documents/react18-demo",
   "browserify": {
     "transform": [
       "loose-envify"
@@ -78,5 +78,5 @@
     "url": "git+https://github.com/facebook/react.git",
     "directory": "packages/react"
   },
-  "version": "18.0.0-alpha-b9964684b-20210824"
+  "version": "18.0.0-beta-96ca8d915-20211115"
 }

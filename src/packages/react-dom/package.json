@@ -1,28 +1,28 @@
 {
-  "_from": "react-dom@alpha",
-  "_id": "react-dom@18.0.0-alpha-b9964684b-20210824",
+  "_from": "react-dom@beta",
+  "_id": "react-dom@18.0.0-beta-96ca8d915-20211115",
   "_inBundle": false,
-  "_integrity": "sha1-sRB1AsWkUdXekUuLkmBcN68f7NI=",
+  "_integrity": "sha512-ISFQGQ0lHt+fz/Ch9K9coggTWzp9ScfuvzdshGJ73z5AI7mi9i6mVjVekMDnx0wiECjHP1s87rxNDQGGj9XnHw==",
   "_location": "/react-dom",
   "_phantomChildren": {},
   "_requested": {
     "type": "tag",
     "registry": true,
-    "raw": "react-dom@alpha",
+    "raw": "react-dom@beta",
     "name": "react-dom",
     "escapedName": "react-dom",
-    "rawSpec": "alpha",
+    "rawSpec": "beta",
     "saveSpec": null,
-    "fetchSpec": "alpha"
+    "fetchSpec": "beta"
   },
   "_requiredBy": [
     "#USER",
     "/"
   ],
-  "_resolved": "https://registry.nlark.com/react-dom/download/react-dom-18.0.0-alpha-b9964684b-20210824.tgz?cache=0&sync_timestamp=1629908877933&other_urls=https%3A%2F%2Fregistry.nlark.com%2Freact-dom%2Fdownload%2Freact-dom-18.0.0-alpha-b9964684b-20210824.tgz",
-  "_shasum": "b1107502c5a451d5de914b8b92605c37af1fecd2",
-  "_spec": "react-dom@alpha",
-  "_where": "/Users/sc/Documents/learn-react18",
+  "_resolved": "https://registry.npmjs.org/react-dom/-/react-dom-18.0.0-beta-96ca8d915-20211115.tgz",
+  "_shasum": "511a754eddbb760c83d85251249fe9c52522326e",
+  "_spec": "react-dom@beta",
+  "_where": "/Users/sc/Documents/react18-demo",
   "browser": {
     "./server.js": "./server.browser.js"
   },
@@ -38,7 +38,7 @@
   "dependencies": {
     "loose-envify": "^1.1.0",
     "object-assign": "^4.1.1",
-    "scheduler": "0.21.0-alpha-b9964684b-20210824"
+    "scheduler": "0.21.0-beta-96ca8d915-20211115"
   },
   "deprecated": false,
   "description": "React package for working with the DOM.",
@@ -63,7 +63,7 @@
   "main": "index.js",
   "name": "react-dom",
   "peerDependencies": {
-    "react": "18.0.0-alpha-b9964684b-20210824"
+    "react": "18.0.0-beta-96ca8d915-20211115"
   },
   "repository": {
     "type": "git",
@@ -73,5 +73,5 @@
   "scripts": {
     "start": "node server.js"
   },
-  "version": "18.0.0-alpha-b9964684b-20210824"
+  "version": "18.0.0-beta-96ca8d915-20211115"
 }

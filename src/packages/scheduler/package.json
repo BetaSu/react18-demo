@@ -1,27 +1,27 @@
 {
-  "_from": "scheduler@0.21.0-alpha-b9964684b-20210824",
-  "_id": "scheduler@0.21.0-alpha-b9964684b-20210824",
+  "_from": "scheduler@0.21.0-beta-96ca8d915-20211115",
+  "_id": "scheduler@0.21.0-beta-96ca8d915-20211115",
   "_inBundle": false,
-  "_integrity": "sha1-cd7AEmSfubO6bhAqJkGg+WAK4rU=",
+  "_integrity": "sha512-gm2zVVyjuIHlcqdAv57Tk/lFBf7+RDhYvIEaOZiKf3/YpIZbsiMnfy6yP6+VR3pS//V2LY5Mv8bf6fS+4IOWbg==",
   "_location": "/scheduler",
   "_phantomChildren": {},
   "_requested": {
     "type": "version",
     "registry": true,
-    "raw": "scheduler@0.21.0-alpha-b9964684b-20210824",
+    "raw": "scheduler@0.21.0-beta-96ca8d915-20211115",
     "name": "scheduler",
     "escapedName": "scheduler",
-    "rawSpec": "0.21.0-alpha-b9964684b-20210824",
+    "rawSpec": "0.21.0-beta-96ca8d915-20211115",
     "saveSpec": null,
-    "fetchSpec": "0.21.0-alpha-b9964684b-20210824"
+    "fetchSpec": "0.21.0-beta-96ca8d915-20211115"
   },
   "_requiredBy": [
     "/react-dom"
   ],
-  "_resolved": "https://registry.nlark.com/scheduler/download/scheduler-0.21.0-alpha-b9964684b-20210824.tgz?cache=0&sync_timestamp=1629908887031&other_urls=https%3A%2F%2Fregistry.nlark.com%2Fscheduler%2Fdownload%2Fscheduler-0.21.0-alpha-b9964684b-20210824.tgz",
-  "_shasum": "71dec012649fb9b3ba6e102a2641a0f9600ae2b5",
-  "_spec": "scheduler@0.21.0-alpha-b9964684b-20210824",
-  "_where": "/Users/sc/Documents/learn-react18/node_modules/react-dom",
+  "_resolved": "https://registry.npmjs.org/scheduler/-/scheduler-0.21.0-beta-96ca8d915-20211115.tgz",
+  "_shasum": "b15758da1f33734ab1219aa5147ea79037a42013",
+  "_spec": "scheduler@0.21.0-beta-96ca8d915-20211115",
+  "_where": "/Users/sc/Documents/react18-demo/node_modules/react-dom",
   "browserify": {
     "transform": [
       "loose-envify"
@@ -59,5 +59,5 @@
     "url": "git+https://github.com/facebook/react.git",
     "directory": "packages/scheduler"
   },
-  "version": "0.21.0-alpha-b9964684b-20210824"
+  "version": "0.21.0-beta-96ca8d915-20211115"
 }

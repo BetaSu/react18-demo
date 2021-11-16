@@ -141,6 +141,11 @@ var didStop = false;
 var isFlushing = false;
 var needsPaint = false;
 var shouldYieldForPaint = false;
+var disableYieldValue = false;
+
+function setDisableYieldValue(newValue) {
+  disableYieldValue = newValue;
+}
 
 function advanceTimers(currentTime) {
   // Check for tasks that are no longer delayed and add them to the queue.
@@ -626,7 +631,7 @@ function unstable_flushAll() {
 
 function unstable_yieldValue(value) {
   // eslint-disable-next-line react-internal/no-production-logging
-  if (console.log.name === 'disabledLog') {
+  if (console.log.name === 'disabledLog' || disableYieldValue) {
     // If console.log has been patched, we assume we're in render
     // replaying and we ignore any values yielding in the second pass.
     return;
@@ -641,7 +646,7 @@ function unstable_yieldValue(value) {
 
 function unstable_advanceTime(ms) {
   // eslint-disable-next-line react-internal/no-production-logging
-  if (console.log.name === 'disabledLog') {
+  if (console.log.name === 'disabledLog' || disableYieldValue) {
     // If console.log has been patched, we assume we're in render
     // replaying and we ignore any time advancing in the second pass.
     return;
@@ -686,6 +691,7 @@ exports.unstable_pauseExecution = unstable_pauseExecution;
 exports.unstable_requestPaint = requestPaint;
 exports.unstable_runWithPriority = unstable_runWithPriority;
 exports.unstable_scheduleCallback = unstable_scheduleCallback;
+exports.unstable_setDisableYieldValue = setDisableYieldValue;
 exports.unstable_shouldYield = shouldYieldToHost;
 exports.unstable_wrapCallback = unstable_wrapCallback;
 exports.unstable_yieldValue = unstable_yieldValue;

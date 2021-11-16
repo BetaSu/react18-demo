@@ -13,6 +13,7 @@ if (process.env.NODE_ENV !== "production") {
   (function() {
 'use strict';
 
+// eslint-disable-next-line react-internal/prod-error-codes
 throw new Error('This entry point is not yet supported outside of experimental channels');
   })();
 }

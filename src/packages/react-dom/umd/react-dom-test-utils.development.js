@@ -24,20 +24,24 @@
 
   function warn(format) {
     {
-      for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
-      }
+      {
+        for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+          args[_key - 1] = arguments[_key];
+        }
 
-      printWarning('warn', format, args);
+        printWarning('warn', format, args);
+      }
     }
   }
   function error(format) {
     {
-      for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-        args[_key2 - 1] = arguments[_key2];
-      }
+      {
+        for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+          args[_key2 - 1] = arguments[_key2];
+        }
 
-      printWarning('error', format, args);
+        printWarning('error', format, args);
+      }
     }
   }
 
@@ -51,10 +55,11 @@
       if (stack !== '') {
         format += '%s';
         args = args.concat([stack]);
-      }
+      } // eslint-disable-next-line react-internal/safe-string-coercion
+
 
       var argsWithFormat = args.map(function (item) {
-        return '' + item;
+        return String(item);
       }); // Careful: RN currently depends on this prefix
 
       argsWithFormat.unshift('Warning: ' + format); // We intentionally don't use spread (or .apply) directly because it
@@ -104,7 +109,6 @@
   var REACT_MEMO_TYPE = 0xead3;
   var REACT_LAZY_TYPE = 0xead4;
   var REACT_SCOPE_TYPE = 0xead7;
-  var REACT_OPAQUE_ID_TYPE = 0xeae0;
   var REACT_DEBUG_TRACING_MODE_TYPE = 0xeae1;
   var REACT_OFFSCREEN_TYPE = 0xeae2;
   var REACT_LEGACY_HIDDEN_TYPE = 0xeae3;
@@ -125,7 +129,6 @@
     REACT_MEMO_TYPE = symbolFor('react.memo');
     REACT_LAZY_TYPE = symbolFor('react.lazy');
     REACT_SCOPE_TYPE = symbolFor('react.scope');
-    REACT_OPAQUE_ID_TYPE = symbolFor('react.opaque.id');
     REACT_DEBUG_TRACING_MODE_TYPE = symbolFor('react.debug_trace_mode');
     REACT_OFFSCREEN_TYPE = symbolFor('react.offscreen');
     REACT_LEGACY_HIDDEN_TYPE = symbolFor('react.legacy_hidden');
@@ -142,7 +145,7 @@
   2;
   var Hydrating =
   /*                    */
-  2048;
+  4096;
 
   var ReactCurrentOwner = ReactSharedInternals.ReactCurrentOwner;
   function getNearestMountedFiber(fiber) {
@@ -184,10 +187,8 @@
   }
 
   function assertIsMounted(fiber) {
-    if (!(getNearestMountedFiber(fiber) === fiber)) {
-      {
-        throw Error( "Unable to find node on an unmounted component." );
-      }
+    if (getNearestMountedFiber(fiber) !== fiber) {
+      throw new Error('Unable to find node on an unmounted component.');
     }
   }
 
@@ -198,10 +199,8 @@
       // If there is no alternate, then we only need to check if it is mounted.
       var nearestMounted = getNearestMountedFiber(fiber);
 
-      if (!(nearestMounted !== null)) {
-        {
-          throw Error( "Unable to find node on an unmounted component." );
-        }
+      if (nearestMounted === null) {
+        throw new Error('Unable to find node on an unmounted component.');
       }
 
       if (nearestMounted !== fiber) {
@@ -267,11 +266,7 @@
         // way this could possibly happen is if this was unmounted, if at all.
 
 
-        {
-          {
-            throw Error( "Unable to find node on an unmounted component." );
-          }
-        }
+        throw new Error('Unable to find node on an unmounted component.');
       }
 
       if (a.return !== b.return) {
@@ -331,26 +326,20 @@
           }
 
           if (!didFindChild) {
-            {
-              throw Error( "Child was not found in either parent set. This indicates a bug in React related to the return pointer. Please file an issue." );
-            }
+            throw new Error('Child was not found in either parent set. This indicates a bug ' + 'in React related to the return pointer. Please file an issue.');
           }
         }
       }
 
-      if (!(a.alternate === b)) {
-        {
-          throw Error( "Return fibers should always be each others' alternates. This error is likely caused by a bug in React. Please file an issue." );
-        }
+      if (a.alternate !== b) {
+        throw new Error("Return fibers should always be each others' alternates. " + 'This error is likely caused by a bug in React. Please file an issue.');
       }
     } // If the root is not a host container, we're in a disconnected tree. I.e.
     // unmounted.
 
 
-    if (!(a.tag === HostRoot)) {
-      {
-        throw Error( "Unable to find node on an unmounted component." );
-      }
+    if (a.tag !== HostRoot) {
+      throw new Error('Unable to find node on an unmounted component.');
     }
 
     if (a.stateNode.current === a) {
@@ -962,10 +951,8 @@
         // when we call document.createEvent(). However this can cause confusing
         // errors: https://github.com/facebook/create-react-app/issues/3482
         // So we preemptively throw with a better message instead.
-        if (!(typeof document !== 'undefined')) {
-          {
-            throw Error( "The `document` global was defined when React was initialized, but is not defined anymore. This can happen in a test environment if a component schedules an update from an asynchronous callback, but the test has already finished running. To solve this, you can either unmount the component at the end of your test (and ensure that any asynchronous operations get canceled in `componentWillUnmount`), or you can change the test itself to be asynchronous." );
-          }
+        if (typeof document === 'undefined') {
+          throw new Error('The `document` global was defined when React was initialized, but is not ' + 'defined anymore. This can happen in a test environment if a component ' + 'schedules an update from an asynchronous callback, but the test has already ' + 'finished running. To solve this, you can either unmount the component at ' + 'the end of your test (and ensure that any asynchronous operations get ' + 'canceled in `componentWillUnmount`), or you can change the test itself ' + 'to be asynchronous.');
         }
 
         var evt = document.createEvent('Event');
@@ -1066,8 +1053,10 @@
         if (didCall && didError) {
           if (!didSetError) {
             // The callback errored, but the error event never fired.
+            // eslint-disable-next-line react-internal/prod-error-codes
             error = new Error('An error was thrown inside one of your components, but React ' + "doesn't know what it was. This is likely due to browser " + 'flakiness. React does its best to preserve the "Pause on ' + 'exceptions" behavior of the DevTools, which requires some ' + "DEV-mode only tricks. It's possible that these don't work in " + 'your browser. Try triggering the error in production mode, ' + 'or switching to a modern browser. If you suspect that this is ' + 'actually an issue with React, please file an issue.');
           } else if (isCrossOriginError) {
+            // eslint-disable-next-line react-internal/prod-error-codes
             error = new Error("A cross-origin error was thrown. React doesn't have access to " + 'the actual error object in development. ' + 'See https://reactjs.org/link/crossorigin-error for more information.');
           }
 
@@ -1164,11 +1153,7 @@
       caughtError = null;
       return error;
     } else {
-      {
-        {
-          throw Error( "clearCaughtError was called but no error was captured. This error is likely caused by a bug in React. Please file an issue." );
-        }
-      }
+      throw new Error('clearCaughtError was called but no error was captured. This error ' + 'is likely caused by a bug in React. Please file an issue.');
     }
   }
 
@@ -1252,7 +1237,7 @@
     }
 
     var received;
-    var stringified = '' + inst;
+    var stringified = String(inst);
 
     if (isArray(inst)) {
       received = 'an array';
@@ -1264,11 +1249,7 @@
       received = stringified;
     }
 
-    {
-      {
-        throw Error( methodName + "(...): the first argument must be a React class instance. Instead received: " + received + "." );
-      }
-    }
+    throw new Error(methodName + "(...): the first argument must be a React class instance. " + ("Instead received: " + received + "."));
   }
   /**
    * Utilities for making it easy to test React components.
@@ -1338,7 +1319,7 @@
     return findAllInRenderedFiberTreeInternal(internalInstance, test);
   }
   /**
-   * Finds all instance of components in the rendered tree that are DOM
+   * Finds all instances of components in the rendered tree that are DOM
    * components with the class name matching `className`.
    * @return {array} an array of all the matches.
    */
@@ -1358,10 +1339,8 @@
         var classList = className.split(/\s+/);
 
         if (!isArray(classNames)) {
-          if (!(classNames !== undefined)) {
-            {
-              throw Error( "TestUtils.scryRenderedDOMComponentsWithClass expects a className as a second argument." );
-            }
+          if (classNames === undefined) {
+            throw new Error('TestUtils.scryRenderedDOMComponentsWithClass expects a ' + 'className as a second argument.');
           }
 
           classNames = classNames.split(/\s+/);
@@ -1394,7 +1373,7 @@
     return all[0];
   }
   /**
-   * Finds all instance of components in the rendered tree that are DOM
+   * Finds all instances of components in the rendered tree that are DOM
    * components with the tag name matching `tagName`.
    * @return {array} an array of all the matches.
    */
@@ -1645,10 +1624,8 @@
       return null;
     }
 
-    if (!(!listener || typeof listener === 'function')) {
-      {
-        throw Error( "Expected `" + registrationName + "` listener to be a function, instead got a value of `" + typeof listener + "` type." );
-      }
+    if (listener && typeof listener !== 'function') {
+      throw new Error("Expected `" + registrationName + "` listener to be a function, instead got a value of `" + typeof listener + "` type.");
     }
 
     return listener;
@@ -1735,16 +1712,12 @@
 
   function makeSimulator(eventType) {
     return function (domNode, eventData) {
-      if (!!React.isValidElement(domNode)) {
-        {
-          throw Error( "TestUtils.Simulate expected a DOM node as the first argument but received a React element. Pass the DOM node you wish to simulate the event on instead. Note that TestUtils.Simulate will not work if you are using shallow rendering." );
-        }
+      if (React.isValidElement(domNode)) {
+        throw new Error('TestUtils.Simulate expected a DOM node as the first argument but received ' + 'a React element. Pass the DOM node you wish to simulate the event on instead. ' + 'Note that TestUtils.Simulate will not work if you are using shallow rendering.');
       }
 
-      if (!!isCompositeComponent(domNode)) {
-        {
-          throw Error( "TestUtils.Simulate expected a DOM node as the first argument but received a component instance. Pass the DOM node you wish to simulate the event on instead." );
-        }
+      if (isCompositeComponent(domNode)) {
+        throw new Error('TestUtils.Simulate expected a DOM node as the first argument but received ' + 'a component instance. Pass the DOM node you wish to simulate the event on instead.');
       }
 
       var reactName = 'on' + eventType[0].toUpperCase() + eventType.slice(1);
@@ -1777,7 +1750,7 @@
   } // A one-time snapshot with no plans to update. We'll probably want to deprecate Simulate API.
 
 
-  var simulatedEventTypes = ['blur', 'cancel', 'click', 'close', 'contextMenu', 'copy', 'cut', 'auxClick', 'doubleClick', 'dragEnd', 'dragStart', 'drop', 'focus', 'input', 'invalid', 'keyDown', 'keyPress', 'keyUp', 'mouseDown', 'mouseUp', 'paste', 'pause', 'play', 'pointerCancel', 'pointerDown', 'pointerUp', 'rateChange', 'reset', 'seeked', 'submit', 'touchCancel', 'touchEnd', 'touchStart', 'volumeChange', 'drag', 'dragEnter', 'dragExit', 'dragLeave', 'dragOver', 'mouseMove', 'mouseOut', 'mouseOver', 'pointerMove', 'pointerOut', 'pointerOver', 'scroll', 'toggle', 'touchMove', 'wheel', 'abort', 'animationEnd', 'animationIteration', 'animationStart', 'canPlay', 'canPlayThrough', 'durationChange', 'emptied', 'encrypted', 'ended', 'error', 'gotPointerCapture', 'load', 'loadedData', 'loadedMetadata', 'loadStart', 'lostPointerCapture', 'playing', 'progress', 'seeking', 'stalled', 'suspend', 'timeUpdate', 'transitionEnd', 'waiting', 'mouseEnter', 'mouseLeave', 'pointerEnter', 'pointerLeave', 'change', 'select', 'beforeInput', 'compositionEnd', 'compositionStart', 'compositionUpdate'];
+  var simulatedEventTypes = ['blur', 'cancel', 'click', 'close', 'contextMenu', 'copy', 'cut', 'auxClick', 'doubleClick', 'dragEnd', 'dragStart', 'drop', 'focus', 'input', 'invalid', 'keyDown', 'keyPress', 'keyUp', 'mouseDown', 'mouseUp', 'paste', 'pause', 'play', 'pointerCancel', 'pointerDown', 'pointerUp', 'rateChange', 'reset', 'resize', 'seeked', 'submit', 'touchCancel', 'touchEnd', 'touchStart', 'volumeChange', 'drag', 'dragEnter', 'dragExit', 'dragLeave', 'dragOver', 'mouseMove', 'mouseOut', 'mouseOver', 'pointerMove', 'pointerOut', 'pointerOver', 'scroll', 'toggle', 'touchMove', 'wheel', 'abort', 'animationEnd', 'animationIteration', 'animationStart', 'canPlay', 'canPlayThrough', 'durationChange', 'emptied', 'encrypted', 'ended', 'error', 'gotPointerCapture', 'load', 'loadedData', 'loadedMetadata', 'loadStart', 'lostPointerCapture', 'playing', 'progress', 'seeking', 'stalled', 'suspend', 'timeUpdate', 'transitionEnd', 'waiting', 'mouseEnter', 'mouseLeave', 'pointerEnter', 'pointerLeave', 'change', 'select', 'beforeInput', 'compositionEnd', 'compositionStart', 'compositionUpdate'];
 
   function buildSimulators() {
     simulatedEventTypes.forEach(function (eventType) {
