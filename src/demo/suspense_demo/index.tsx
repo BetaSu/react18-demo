@@ -1,7 +1,7 @@
 import React, { useMemo, useState, Suspense, ReactChildren, ReactNode } from "react";
 import {unstable_createResource, unstable_setGlobalCacheLimit} from 'react-cache';
 
-import '../setLog';
+import '../../baseLog';
 
 unstable_setGlobalCacheLimit(0);
 

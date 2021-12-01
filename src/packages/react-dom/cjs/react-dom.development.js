@@ -13215,6 +13215,7 @@ function commitUpdateQueue(finishedWork, finishedQueue, instance) {
   finishedQueue.effects = null;
 
   if (effects !== null) {
+    /*KaSong*/logHook('commitUpdateQueue', finishedWork, effects);
     for (var i = 0; i < effects.length; i++) {
       var effect = effects[i];
       var callback = effect.callback;
@@ -18595,6 +18596,8 @@ function createRootErrorUpdate(fiber, errorInfo, lane) {
     logCapturedError(fiber, errorInfo);
   };
 
+  /*KaSong*/logHook('createRootErrorUpdate', executionContext, fiber, update)
+
   return update;
 }
 
@@ -18617,6 +18620,8 @@ function createClassErrorUpdate(fiber, errorInfo, lane) {
 
       logCapturedError(fiber, errorInfo);
     };
+
+    /*KaSong*/logHook('createClassErrorUpdate', 'getDerivedStateFromError', executionContext, fiber, update);
   }
 
   var inst = fiber.stateNode;
@@ -18655,6 +18660,7 @@ function createClassErrorUpdate(fiber, errorInfo, lane) {
         }
       }
     };
+    /*KaSong*/logHook('createClassErrorUpdate', 'componentDidCatch', executionContext, fiber, update);
   }
 
   return update;
@@ -18944,6 +18950,7 @@ function throwException(root, returnFiber, sourceFiber, value, rootRenderLanes) 
           workInProgress.lanes = mergeLanes(workInProgress.lanes, lane);
           var update = createRootErrorUpdate(workInProgress, _errorInfo, lane);
           enqueueCapturedUpdate(workInProgress, update);
+          /*KaSong*/logHook('ErrorUpdate on Root', 'render', update, workInProgress)
           return;
         }
 
@@ -18963,6 +18970,8 @@ function throwException(root, returnFiber, sourceFiber, value, rootRenderLanes) 
           var _update = createClassErrorUpdate(workInProgress, errorInfo, _lane);
 
           enqueueCapturedUpdate(workInProgress, _update);
+
+          /*KaSong*/logHook('ErrorUpdate on ClassComponent', 'render', _update, workInProgress)
           return;
         }
 
@@ -19151,6 +19160,8 @@ function bubbleProperties(completedWork) {
   var newChildLanes = NoLanes;
   var subtreeFlags = NoFlags;
 
+  /*KaSong*/logHook('bubbleProperties', completedWork, didBailout)
+
   if (!didBailout) {
     // Bubble up the earliest expiration time.
     if ( (completedWork.mode & ProfileMode) !== NoMode) {
@@ -19246,6 +19257,8 @@ function completeWork(current, workInProgress, renderLanes) {
   // to the current tree provider fiber is just as fast and less error-prone.
   // Ideally we would have a special version of the work loop only
   // for hydration.
+
+/*KaSong*/logHook('completeWork', current, workInProgress)
 
   popTreeContext(workInProgress);
 
@@ -20345,6 +20358,8 @@ function updateClassComponent(current, workInProgress, Component, nextProps, ren
 
           var update = createClassErrorUpdate(workInProgress, createCapturedValue(error$1, workInProgress), lane);
           enqueueCapturedUpdate(workInProgress, update);
+
+          /*KaSong*/logHook('ErrorUpdate on ClassComponent', 'render', update, workInProgress)
           break;
         }
     }
@@ -21962,13 +21977,14 @@ function bailoutOnAlreadyFinishedWork(current, workInProgress, renderLanes) {
     // TODO: Once we add back resuming, we should check if the children are
     // a work-in-progress set. If so, we need to transfer their effects.
     {
+      /*KaSong*/logHook('bailoutOnAlreadyFinishedWork', 'skip children')
       return null;
     }
   } // This fiber doesn't have work, but its subtree does. Clone the child
   // fibers and continue.
 
-
   cloneChildFibers(current, workInProgress);
+  /*KaSong*/logHook('bailoutOnAlreadyFinishedWork', 'cloneChildFibers', workInProgress.child)
   return workInProgress.child;
 }
 
@@ -22228,6 +22244,7 @@ function beginWork(current, workInProgress, renderLanes) {
       return remountFiber(current, workInProgress, createFiberFromTypeAndProps(workInProgress.type, workInProgress.key, workInProgress.pendingProps, workInProgress._debugOwner || null, workInProgress.mode, workInProgress.lanes));
     }
   }
+  /*KaSong*/logHook('beginWork', current, workInProgress)
 
   if (current !== null) {
     var oldProps = current.memoizedProps;
@@ -22755,6 +22772,7 @@ function commitBeforeMutationEffects_complete() {
     setCurrentFiber(fiber);
 
     try {
+      /*KaSong*/logHook('commitBeforeMutationEffectsOnFiber', fiber)
       commitBeforeMutationEffectsOnFiber(fiber);
     } catch (error) {
       reportUncaughtErrorInDEV(error);
@@ -24171,6 +24189,7 @@ function commitMutationEffects_complete(root) {
     setCurrentFiber(fiber);
 
     try {
+      /*KaSong*/logHook('commitMutationEffectsOnFiber', fiber)
       commitMutationEffectsOnFiber(fiber, root);
     } catch (error) {
       reportUncaughtErrorInDEV(error);
@@ -24278,6 +24297,7 @@ function commitMutationEffectsOnFiber(finishedWork, root) {
    switch (primaryFlags) {
     case Placement:
       {
+        /*KaSong*/logHook('updateDOM', finishedWork, 'commitPlacement')
         commitPlacement(finishedWork); // Clear the "placement" from effect tag so that we know that this is
         // inserted, before any life-cycles like componentDidMount gets called.
         // TODO: findDOMNode doesn't rely on this any more but isMounted does
@@ -24290,12 +24310,14 @@ function commitMutationEffectsOnFiber(finishedWork, root) {
     case PlacementAndUpdate:
       {
         // Placement
+        /*KaSong*/logHook('updateDOM', finishedWork, 'commitPlacement')
         commitPlacement(finishedWork); // Clear the "placement" from effect tag so that we know that this is
         // inserted, before any life-cycles like componentDidMount gets called.
 
         finishedWork.flags &= ~Placement; // Update
 
         var _current3 = finishedWork.alternate;
+        /*KaSong*/logHook('updateDOM', finishedWork, 'commitWork')
         commitWork(_current3, finishedWork);
         break;
       }
@@ -24318,6 +24340,7 @@ function commitMutationEffectsOnFiber(finishedWork, root) {
     case Update:
       {
         var _current5 = finishedWork.alternate;
+        /*KaSong*/logHook('updateDOM', finishedWork, 'commitWork')
         commitWork(_current5, finishedWork);
         break;
       }
@@ -24404,6 +24427,7 @@ function commitLayoutMountEffects_complete(subtreeRoot, root, committedLanes) {
       setCurrentFiber(fiber);
 
       try {
+        /*KaSong*/logHook('commitLayoutEffectOnFiber', fiber)
         commitLayoutEffectOnFiber(root, current, fiber, committedLanes);
       } catch (error) {
         reportUncaughtErrorInDEV(error);
@@ -25493,6 +25517,9 @@ function performConcurrentWorkOnRoot(root, didTimeout) {
 
 
   var shouldTimeSlice = !includesBlockingLane(root, lanes) && !includesExpiredLane(root, lanes) && ( !didTimeout);
+
+  /*KaSong*/logHook('shouldTimeSlice', shouldTimeSlice);
+
   var exitStatus = shouldTimeSlice ? renderRootConcurrent(root, lanes) : renderRootSync(root, lanes);
 
   /*KaSong*/logHook('performConcurrentWorkOnRoot-exitStatus', exitStatus);
@@ -26119,6 +26146,7 @@ function renderHasNotSuspendedYet() {
 }
 
 function renderRootSync(root, lanes) {
+  /*KaSong*/logHook('renderRootSync', root, lanes)
   var prevExecutionContext = executionContext;
   executionContext |= RenderContext;
   var prevDispatcher = pushDispatcher(); // If the root or lanes have changed, throw out the existing stack
@@ -26188,6 +26216,7 @@ function workLoopSync() {
 }
 
 function renderRootConcurrent(root, lanes) {
+  /*KaSong*/logHook('renderRootConcurrent', root, lanes)
   var prevExecutionContext = executionContext;
   executionContext |= RenderContext;
   var prevDispatcher = pushDispatcher(); // If the root or lanes have changed, throw out the existing stack
@@ -26498,6 +26527,8 @@ function commitRootImpl(root, renderPriorityLevel) {
     var prevExecutionContext = executionContext;
     executionContext |= CommitContext; // Reset this to null before calling lifecycles
 
+    /*KaSong*/logHook('commitBegin', '有effect需要处理', root)
+
     ReactCurrentOwner$2.current = null; // The commit phase is broken into several sub-phases. We do a separate pass
     // of the effect list for each phase: all mutation effects come before all
     // layout effects, and so on.
@@ -26712,6 +26743,9 @@ function flushPassiveEffectsImpl() {
 
   var prevExecutionContext = executionContext;
   executionContext |= CommitContext;
+
+  /*KaSong*/logHook('commitBegin', '有PassiveEffect需要处理')
+
   commitPassiveUnmountEffects(root.current);
   commitPassiveMountEffects(root, root.current); // TODO: Move to commitPassiveMountEffects
 
@@ -26776,6 +26810,8 @@ function captureCommitPhaseErrorOnRoot(rootFiber, sourceFiber, error) {
   enqueueUpdate(rootFiber, update);
   var eventTime = requestEventTime();
   var root = markUpdateLaneFromFiberToRoot(rootFiber, SyncLane);
+  
+  /*KaSong*/logHook('ErrorUpdate on Root', 'commit', update, rootFiber)
 
   if (root !== null) {
     markRootUpdated(root, SyncLane, eventTime);
@@ -26811,6 +26847,8 @@ function captureCommitPhaseError(sourceFiber, nearestMountedAncestor, error$1) {
         enqueueUpdate(fiber, update);
         var eventTime = requestEventTime();
         var root = markUpdateLaneFromFiberToRoot(fiber, SyncLane);
+
+        /*KaSong*/logHook('ErrorUpdate on ClassComponent', 'commit', update, fiber)
 
         if (root !== null) {
           markRootUpdated(root, SyncLane, eventTime);
@@ -29300,7 +29338,7 @@ var foundDevTools = injectIntoDevTools({
 
       if (/^(https?|file):$/.test(protocol)) {
         // eslint-disable-next-line react-internal/no-production-logging
-        console.info('%cDownload the React DevTools ' + 'for a better development experience: ' + 'https://reactjs.org/link/react-devtools' + (protocol === 'file:' ? '\nYou might need to use a local HTTP server (instead of file://): ' + 'https://reactjs.org/link/react-devtools-faq' : ''), 'font-weight:bold');
+        /*KaSong*/ //console.info('%cDownload the React DevTools ' + 'for a better development experience: ' + 'https://reactjs.org/link/react-devtools' + (protocol === 'file:' ? '\nYou might need to use a local HTTP server (instead of file://): ' + 'https://reactjs.org/link/react-devtools-faq' : ''), 'font-weight:bold');
       }
     }
   }

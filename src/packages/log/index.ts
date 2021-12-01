@@ -1,8 +1,10 @@
 import * as u from './utils';
 
-u.log('#327205', '答疑、掌握更多React知识，欢迎关注公众号《魔术师卡颂》');
+u.log('#127299', '卡颂：欢迎使用《React技术揭秘》配套调试项目，玩得开心');
 
 type TLogCB = (...args: any) => void;
+
+export type Phase = 'commit' | 'render' | 'schedule';
 
 export const utils = u;
 

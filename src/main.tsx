@@ -1,14 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './setLog';
+import './baseLog';
 
 // import App from './suspense_demo'
-import App from './longTaskDemo';
+// import App from './demo/reconcilerDemo';
+import App from './demo/ErrorCatchDemo';
+
 
 const rootEle = document.getElementById('root');
 
-// ReactDOM.render(<App/>, rootEle)
+rootEle && ReactDOM.createRoot(rootEle).render(<App/>);
 
-rootEle && ReactDOM.createRoot(rootEle).render(
-  <App />
-);
+// rootEle && ReactDOM.hydrateRoot(rootEle, <App/>);

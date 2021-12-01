@@ -2,13 +2,14 @@ interface TWIP {
   type: any;
   tag: number;
   memoizedProps: any;
+  pendingProps: any;
 }
 
 export const getType2Use = (wip: TWIP): string => {
-  const {type, tag, memoizedProps} = wip;
+  const {type, tag, memoizedProps, pendingProps} = wip;
   switch (tag) {
     case 3:
-      return '根组件';
+      return `HostRoot（应用的根）`;
     case 2:
       return `${type.name}（函数组件或类组件）`;
     case 1:
@@ -16,7 +17,7 @@ export const getType2Use = (wip: TWIP): string => {
     case 0:
       return `${type.name}（函数组件）`;
     case 6:
-      return `${memoizedProps}（文本组件）`
+      return `${pendingProps}（文本）`
     default:
       return type;
   }
@@ -111,3 +112,24 @@ export const lane2LaneName = (lane: number) => {
   }[lane];
 }
 
+export const getPhaseFromExecutionContext = (executionContext: number) => {
+  if ((executionContext & 2) !== 0) {
+    return 'render';
+  }
+  if ((executionContext & 4) !== 0) {
+    return 'commit';
+  }
+  // 缺少schedule阶段的判断
+  return 'noop';
+}
+
+export const COLOR = {
+  // 处于调度阶段
+  SCHEDULE_COLOR: '#727999',
+  // 处于render阶段
+  RENDER_COLOR: '#327205',
+  // 处于commit阶段
+  COMMIT_COLOR: '#997205',
+  // 不处于React某个阶段，而是用户代码中
+  USERSPACE_COLOR: '#197205'
+}

@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "chokidar src/packages --initial --silent -c 'node ./bin/runDEV.js'",
+    "ssr": "node server",
     "build": "tsc && vite build",
     "serve": "vite preview"
   },

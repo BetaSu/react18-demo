@@ -14,7 +14,10 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react",
-    "types": ["react/next", "react-dom/next"]
+    "types": ["react/next", "react-dom/next"],
+    "paths": {
+      "log": ["./src/packages/log"]
+    }
   },
   "include": ["./src"]
 }
