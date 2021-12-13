@@ -53,11 +53,12 @@ class ErrorBoundary extends Component {
   state = {
     hasError: false
   }
-  static getDerivedStateFromError() {
-    return {
-      hasError: true
-    };
-  }
+  // static getDerivedStateFromError() {
+  //   console.log('in');
+  //   return {
+  //     hasError: true
+  //   };
+  // }
   // 试试注释componentDidCatch，观察错误冒泡到Root处理的情况
   componentDidCatch() {
     console.warn('catch error in componentDidCatch');
@@ -75,10 +76,18 @@ class ErrorBoundary extends Component {
 function SomeFunctionComponent() {
   useLayoutEffect(() => {
     // commit阶段抛出错误
-    // throw new Error("Error!");
+    throw new Error("Error!");
   }, [])
 
   // render阶段抛出错误
-  throw new Error("Error!");
+  // throw new Error("Error!");
   return <p>some function component</p>;
 }
+
+// 事件回调中的错误不会被catch
+// const SomeFunctionComponent = () => {
+//   const handleClick = () => {
+//     throw new Error("错误发生")
+//   };
+//   return <div onClick={handleClick}>Hello</div>;
+// }

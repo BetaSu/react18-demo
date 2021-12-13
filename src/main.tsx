@@ -4,11 +4,11 @@ import './baseLog';
 
 // import App from './suspense_demo'
 // import App from './demo/reconcilerDemo';
-import App from './demo/ErrorCatchDemo';
+import './demo/SchedulerDemo';
+// import App from './demo/ErrorCatchDemo';
 
 
-const rootEle = document.getElementById('root');
-
-rootEle && ReactDOM.createRoot(rootEle).render(<App/>);
+// const rootEle = document.getElementById('root');
+// rootEle && ReactDOM.createRoot(rootEle).render(<App/>);
 
 // rootEle && ReactDOM.hydrateRoot(rootEle, <App/>);
