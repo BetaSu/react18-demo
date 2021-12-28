@@ -19,6 +19,13 @@ bindHook('commitUpdateQueue', (fiber, effects) => {
   log(COMMIT_COLOR, `commit UpdateQueue`, effects);
 })  
 
+bindHook('updateDOMProperties', (dom, type) => {
+  log(COMMIT_COLOR, `更新DOM属性 ${type}`, dom);
+})
+
+bindHook('updateDOM', (fiber, type) => {
+  log(COMMIT_COLOR, `更新DOM ${type}`, fiber);
+})
 
 
 // 用于调试 commit阶段 工作流程的Demo

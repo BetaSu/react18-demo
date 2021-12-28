@@ -25395,7 +25395,7 @@ function ensureRootIsScheduled(root, currentTime) {
       }
     } // The priority hasn't changed. We can reuse the existing task. Exit.
 
-
+    /*KaSong*/logHook('priorityNotChange', newCallbackPriority);
     return;
   }
 
@@ -25414,10 +25414,10 @@ function ensureRootIsScheduled(root, currentTime) {
       if ( ReactCurrentActQueue$1.isBatchingLegacy !== null) {
         ReactCurrentActQueue$1.didScheduleLegacyUpdate = true;
       }
-      /*KaSong*/logHook('schedule callback', 'legacySync', performSyncWorkOnRoot.name);
+      /*KaSong*/logHook('scheduleCallback', 'legacySync', performSyncWorkOnRoot.name);
       scheduleLegacySyncCallback(performSyncWorkOnRoot.bind(null, root));
     } else {
-      /*KaSong*/logHook('schedule callback', 'sync', performSyncWorkOnRoot.name);
+      /*KaSong*/logHook('scheduleCallback', 'sync', performSyncWorkOnRoot.name);
       scheduleSyncCallback(performSyncWorkOnRoot.bind(null, root));
     }
 
@@ -25429,7 +25429,7 @@ function ensureRootIsScheduled(root, currentTime) {
         // of `act`.
         ReactCurrentActQueue$1.current.push(flushSyncCallbacks);
       } else {
-        /*KaSong*/logHook('schedule callback', 'microtask', flushSyncCallbacks.name);
+        /*KaSong*/logHook('scheduleCallback', 'microtask', flushSyncCallbacks.name);
         scheduleMicrotask(flushSyncCallbacks);
       }
     }
@@ -25459,7 +25459,7 @@ function ensureRootIsScheduled(root, currentTime) {
         schedulerPriorityLevel = NormalPriority;
         break;
     }
-    /*KaSong*/logHook('schedule callback', 'concurrent', performConcurrentWorkOnRoot.name, schedulerPriorityLevel);
+    /*KaSong*/logHook('scheduleCallback', 'concurrent', performConcurrentWorkOnRoot.name, schedulerPriorityLevel);
     newCallbackNode = scheduleCallback$1(schedulerPriorityLevel, performConcurrentWorkOnRoot.bind(null, root));
   }
 
@@ -25516,7 +25516,8 @@ function performConcurrentWorkOnRoot(root, didTimeout) {
   // we can remove this, since we track expiration ourselves.
 
 
-  var shouldTimeSlice = !includesBlockingLane(root, lanes) && !includesExpiredLane(root, lanes) && ( !didTimeout);
+  // var shouldTimeSlice = !includesBlockingLane(root, lanes) && !includesExpiredLane(root, lanes) && ( !didTimeout);
+  var shouldTimeSlice = true;
 
   /*KaSong*/logHook('shouldTimeSlice', shouldTimeSlice);
 
@@ -25590,6 +25591,7 @@ function performConcurrentWorkOnRoot(root, didTimeout) {
   if (root.callbackNode === originalCallbackNode) {
     // The task node scheduled for this root is the same one that's
     // currently executed. Need to return a continuation.
+    /*KaSong*/logHook('continuationCallback', root);
     return performConcurrentWorkOnRoot.bind(null, root);
   }
 

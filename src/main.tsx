@@ -5,7 +5,7 @@ import './baseLog';
 // import App from './suspense_demo'
 // import App from './demo/reconcilerDemo';
 import './demo/SchedulerDemo';
-// import App from './demo/ErrorCatchDemo';
+// import App from './demo/longTaskDemo';
 
 
 // const rootEle = document.getElementById('root');

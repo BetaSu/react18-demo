@@ -10,16 +10,23 @@ import {
   unstable_cancelCallback as cancelCallback,
   unstable_runWithPriority as runWithPriority,
   unstable_getCurrentPriorityLevel as getCurrentPriorityLevel,
+  CallbackNode
 } from "scheduler";
+
+import './style.css';
 
 type Priority = typeof IdlePriority | typeof ImmediatePriority | typeof LowPriority | typeof NormalPriority | typeof UserBlockingPriority;
 
-const priorityList: Priority[] = [
+interface Work {
+  priority: Priority;
+  count: number;
+}
+
+const priority2UseList: Priority[] = [
   ImmediatePriority,
   UserBlockingPriority,
   NormalPriority,
-  LowPriority,
-  IdlePriority,
+  LowPriority
 ]
 
 const priority2Name = [
@@ -31,87 +38,103 @@ const priority2Name = [
   'IdlePriority',
 ]
 
+
+
 const root = document.querySelector('#root') as Element;
+const contentBox = document.querySelector('#content') as Element;
 
-console.log('in');
-
-let curIndex = 0;
-const taskList: Priority[] = [];
+const workList: Work[] = [];
 let prevPriority: Priority = IdlePriority;
+let curCallback: CallbackNode | null = null;
+
 
 // 初始化优先级对应按钮
-priorityList.forEach(priority => {
+priority2UseList.forEach(priority => {
   const btn = document.createElement('button');
   root.appendChild(btn);
   btn.innerText = priority2Name[priority];
-
   btn.onclick = () => {
-    // 插入3个任务
-    taskList.push(priority);
-    taskList.push(priority);
-    taskList.push(priority);
-    debugger
+    // 插入work
+    workList.push({
+      priority,
+      count: 100
+    });
     schedule();
   };
 })
 
 /**
- * 需要考虑4种情况
- * 1. 正常执行任务
- * 2. 老任务执行时，新任务是低优先级，继续执行老任务
- * 3. 老任务执行时，新任务是同优先级，继续执行老任务
- * 4. 老任务执行时，新任务是高优先级，优先执行新任务
+ * 调度的逻辑
  */
 function schedule() {
-  console.log('schedule');
-  const cb = getFirstCallbackNode();
-  const curPriority = taskList[taskList.length - 1];
-  console.log(1);
-  if (curPriority && curPriority < prevPriority && cb) {
-    // 情况4 打断老任务，重新调度新任务
-    cancelCallback(cb);
-  }
-  console.log(2);
-  if (curPriority && curPriority >= prevPriority) {
-    // 情况2、3 继续老任务，不调度新任务
+  // 当前可能存在正在调度的回调
+  const cbNode = getFirstCallbackNode();
+  // 取出最高优先级的工作
+  const curWork = workList.sort((w1, w2) => {
+    return w1.priority - w2.priority;
+  })[0];
+
+  if (!curWork) {
+    // 没有工作需要执行，退出调度
+    curCallback = null;
+    cbNode && cancelCallback(cbNode);
     return;
   }
-  console.log(3);
-  if (!curPriority) {
-    // 没有task需要执行
-    return cb && cancelCallback(cb);
+
+  const {priority: curPriority} = curWork;
+  
+  if (curPriority === prevPriority) {
+    // 有工作在进行，比较该工作与正在进行的工作的优先级
+    // 如果优先级相同，则不需要调度新的，退出调度
+    return;
   }
-  console.log(4);
-  // 情况1
-  scheduleCallback(curPriority, perform);
+  
+  // 准备调度当前最高优先级的工作
+  // 调度之前，如果有工作在进行，则中断他
+  cbNode && cancelCallback(cbNode);
+
+  // 调度当前最高优先级的工作
+  curCallback = scheduleCallback(curPriority, perform.bind(null, curWork));
 }
 
-function perform() {
-  insertItem();
+// 执行具体的工作
+function perform(work: Work, didTimeout?: boolean): any {
+  // 是否需要同步执行，满足1.工作是同步优先级 2.当前调度的任务过期了，需要同步执行
+  const needSync =  work.priority === ImmediatePriority || didTimeout;
+  while ((needSync || !shouldYield()) && work.count) {
+    work.count--;
+    // 执行具体的工作
+    insertItem(work.priority + '');
+  }
+  prevPriority = work.priority;
+
+  if (!work.count) {
+    // 完成的work，从workList中删除
+    const workIndex = workList.indexOf(work);
+    workList.splice(workIndex, 1);
+    // 重置优先级
+    prevPriority = IdlePriority;
+  }
+
+  const prevCallback = curCallback;
+  // 调度完后，如果callback变化，代表这是新的work
   schedule();
-  return perform;
+  const newCallback = curCallback;
+
+  if (newCallback && prevCallback === newCallback) {
+    // callback没变，代表是同一个work，只不过时间切片时间用尽（5ms）
+    // 返回的函数会被Scheduler继续调用
+    console.log('contin');
+    return perform.bind(null, work);
+  }
 }
 
-const createElement = (type: string, content: string) => {
-  const ele = document.createElement(type);
-  ele.innerText = content;
-  return ele;
-};
-
-
-
-const insertItem = () => {
-  const task = taskList.pop();
-  prevPriority = task || IdlePriority;
-
-  const y = shouldYield();
-  console.log(y, task);
-  while (task && !y) {
-    const curPriority = getCurrentPriorityLevel();
-    const li = createElement("li", `${curIndex++} ${priority2Name[curPriority]}`);
-    doSomeBuzyWork(1000);
-    root.appendChild(li);
-  }
+const insertItem = (content: string) => {
+  const ele = document.createElement('span');
+  ele.innerText = `${content}`;
+  ele.className = `pri-${content}`;
+  doSomeBuzyWork(10000000);
+  contentBox.appendChild(ele);
 };
 
 const doSomeBuzyWork = (len: number) => {
