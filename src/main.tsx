@@ -1,14 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './baseLog';
+import './globalLog';
+// import App from './demo/SuspenseDemo'
+// import './demo/SchedulerDemo';
+// import App from './demo/BaseScheduleDemo';
+// import App from './demo/LongTaskDemo';
+// import App from './demo/BaseScheduleDemo';
+// import App from './demo/RenderPhaseDemo';
+import App from './demo/testDemo1';
 
-// import App from './suspense_demo'
-// import App from './demo/reconcilerDemo';
-import './demo/SchedulerDemo';
-// import App from './demo/longTaskDemo';
+const rootEle = document.getElementById('root');
 
+// import './demo/MiniUpdate2State';
 
-// const rootEle = document.getElementById('root');
-// rootEle && ReactDOM.createRoot(rootEle).render(<App/>);
-
-// rootEle && ReactDOM.hydrateRoot(rootEle, <App/>);
+rootEle && ReactDOM.createRoot(rootEle).render(<App/>);

@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState, useTransition} from 'react';
 import {flushSync} from 'react-dom';
 import {bindHook, utils} from 'log';
 
-const {log, getType2Use, lanes2Str, lane2LaneName, COLOR: {SCHEDULE_COLOR, RENDER_COLOR, COMMIT_COLOR}} = utils;
+const {log, lanes2Str, lane2LaneName, COLOR: {SCHEDULE_COLOR, RENDER_COLOR, COMMIT_COLOR}} = utils;
 
 bindHook('continuationCallback', (root) => {
   log(SCHEDULE_COLOR, `continuationCallback`);
@@ -10,10 +10,6 @@ bindHook('continuationCallback', (root) => {
 bindHook('priorityNotChange', (priority) => {
   log(SCHEDULE_COLOR, 'priority没变化，继续原callback', priority);
 })  
-
-// bindHook('shouldTimeSlice', (shouldTimeSlice) => {
-//   log(RENDER_COLOR, `${shouldTimeSlice ? '启用' : '关闭'}时间切片`);
-// })
 
 bindHook('ensureRootIsScheduled', (lanes, lane) => {
   log(SCHEDULE_COLOR, `调度root，lanes：${lanes2Str(lanes)}`, `优先级：${lane2LaneName(lane)}`);

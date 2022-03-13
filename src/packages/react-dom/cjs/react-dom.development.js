@@ -25,7 +25,9 @@ if (
           var React = require('react');
 var _assign = require('object-assign');
 var Scheduler = require('scheduler');
-/*KaSong*/var {logHook} = require('log');
+/*KaSong*/var {logHook, logLibraryMethod} = require('log');
+
+/*KaSong*/logLibraryMethod(getComponentNameFromFiber);
 
 var ReactSharedInternals = React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
 
@@ -5282,6 +5284,7 @@ function getNextLanes(root, wipLanes) {
       var index = pickArbitraryLaneIndex(lanes);
       var lane = 1 << index;
       nextLanes |= entanglements[index];
+      /*KaSong*/logHook('getNextLanes_entangledLanes', entanglements[index])
       lanes &= ~lane;
     }
   }
@@ -5571,7 +5574,9 @@ function markRootPinged(root, pingedLanes, eventTime) {
 function markRootFinished(root, remainingLanes) {
   var noLongerPendingLanes = root.pendingLanes & ~remainingLanes;
   root.pendingLanes = remainingLanes; // Let's try everything again
-
+  // if (root.suspendedLanes || root.pingedLanes) {
+  //   debugger
+  // }
   root.suspendedLanes = 0;
   root.pingedLanes = 0;
   root.expiredLanes &= remainingLanes;
@@ -5604,6 +5609,9 @@ function markRootEntangled(root, entangledLanes) {
   // If this is hard to grasp, it might help to intentionally break this
   // function and look at the tests that fail in ReactTransition-test.js. Try
   // commenting out one of the conditions below.
+
+  /*KaSong*/logHook('markRootEntangled', entangledLanes)
+
   var rootEntangledLanes = root.entangledLanes |= entangledLanes;
   var entanglements = root.entanglements;
   var lanes = rootEntangledLanes;
@@ -21503,6 +21511,7 @@ function updateDehydratedSuspenseComponent(current, workInProgress, suspenseInst
 }
 
 function scheduleWorkOnFiber(fiber, renderLanes) {
+  /*KaSong*/logHook('changeLanes', 'scheduleWorkOnFiber', fiber.lanes, mergeLanes(fiber.lanes, renderLanes))
   fiber.lanes = mergeLanes(fiber.lanes, renderLanes);
   var alternate = fiber.alternate;
 
@@ -22303,7 +22312,7 @@ function beginWork(current, workInProgress, renderLanes) {
   // sometimes bails out later in the begin phase. This indicates that we should
   // move this assignment out of the common path and into each branch.
 
-
+  /*KaSong*/logHook('changeLanes', 'beginWork', workInProgress.lanes, NoLanes)
   workInProgress.lanes = NoLanes;
 
   switch (workInProgress.tag) {
@@ -25297,6 +25306,7 @@ function scheduleUpdateOnFiber(fiber, lane, eventTime) {
 
 function markUpdateLaneFromFiberToRoot(sourceFiber, lane) {
   // Update the source fiber's lanes
+  /*KaSong*/logHook('changeLanes', 'markUpdateLaneFromFiberToRoot', sourceFiber.lanes, mergeLanes(sourceFiber.lanes, lane))
   sourceFiber.lanes = mergeLanes(sourceFiber.lanes, lane);
   var alternate = sourceFiber.alternate;
 
@@ -25516,8 +25526,8 @@ function performConcurrentWorkOnRoot(root, didTimeout) {
   // we can remove this, since we track expiration ourselves.
 
 
-  // var shouldTimeSlice = !includesBlockingLane(root, lanes) && !includesExpiredLane(root, lanes) && ( !didTimeout);
-  var shouldTimeSlice = true;
+  var shouldTimeSlice = !includesBlockingLane(root, lanes) && !includesExpiredLane(root, lanes) && ( !didTimeout);
+  // var shouldTimeSlice = true;
 
   /*KaSong*/logHook('shouldTimeSlice', shouldTimeSlice);
 
@@ -25560,6 +25570,8 @@ function performConcurrentWorkOnRoot(root, didTimeout) {
       // synchronously, to block further mutations.
       exitStatus = renderRootSync(root, lanes); // We need to check again if something threw
 
+      /*KaSong*/logHook('performSyncWorkOnRoot-exitStatus', exitStatus);
+      
       if (exitStatus === RootErrored) {
         var _errorRetryLanes = getLanesToRetrySynchronouslyOnError(root);
 
@@ -25972,10 +25984,12 @@ function pushRenderLanes(fiber, lanes) {
   push(subtreeRenderLanesCursor, subtreeRenderLanes, fiber);
   subtreeRenderLanes = mergeLanes(subtreeRenderLanes, lanes);
   workInProgressRootIncludedLanes = mergeLanes(workInProgressRootIncludedLanes, lanes);
+  /*KaSong*/logHook('pushRenderLanes', fiber, lanes)
 }
 function popRenderLanes(fiber) {
   subtreeRenderLanes = subtreeRenderLanesCursor.current;
   pop(subtreeRenderLanesCursor, fiber);
+  /*KaSong*/logHook('popRenderLanes', fiber)
 }
 
 function prepareFreshStack(root, lanes) {
@@ -27942,6 +27956,7 @@ function resetWorkInProgress(workInProgress, renderLanes) {
   if (current === null) {
     // Reset to createFiber's initial values.
     workInProgress.childLanes = NoLanes;
+    /*KaSong*/logHook('changeLanes', 'resetWorkInProgress', workInProgress.lanes, renderLanes)
     workInProgress.lanes = renderLanes;
     workInProgress.child = null;
     workInProgress.subtreeFlags = NoFlags;
@@ -27960,6 +27975,7 @@ function resetWorkInProgress(workInProgress, renderLanes) {
   } else {
     // Reset to the cloned values that createWorkInProgress would've.
     workInProgress.childLanes = current.childLanes;
+    /*KaSong*/logHook('changeLanes', 'resetWorkInProgress', workInProgress.lanes, current.lanes)
     workInProgress.lanes = current.lanes;
     workInProgress.child = current.child;
     workInProgress.subtreeFlags = NoFlags;
@@ -29358,7 +29374,6 @@ exports.unmountComponentAtNode = unmountComponentAtNode;
 exports.unstable_batchedUpdates = batchedUpdates$1;
 exports.unstable_renderSubtreeIntoContainer = renderSubtreeIntoContainer;
 exports.version = ReactVersion;
-/*KaSong*/exports.from = 'src/packages';
           /* global __REACT_DEVTOOLS_GLOBAL_HOOK__ */
 if (
   typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== 'undefined' &&

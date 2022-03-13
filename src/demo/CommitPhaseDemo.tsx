@@ -1,7 +1,7 @@
 import React, {useState, Component, useLayoutEffect} from 'react';
 import {bindHook, utils} from 'log';
 
-const {log, getType2Use, COLOR: {SCHEDULE_COLOR, RENDER_COLOR, COMMIT_COLOR}} = utils;
+const {log, COLOR: {SCHEDULE_COLOR, RENDER_COLOR, COMMIT_COLOR}} = utils;
 
 bindHook('commitBeforeMutationEffectsOnFiber', (fiber) => {
   log(COMMIT_COLOR, `commit BeforeMutationEffects`, fiber);

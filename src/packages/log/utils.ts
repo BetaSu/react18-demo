@@ -5,27 +5,11 @@ interface TWIP {
   pendingProps: any;
 }
 
-export const getType2Use = (wip: TWIP): string => {
-  const {type, tag, memoizedProps, pendingProps} = wip;
-  switch (tag) {
-    case 3:
-      return `HostRoot（应用的根）`;
-    case 2:
-      return `${type.name}（函数组件或类组件）`;
-    case 1:
-      return `${type.name}（类组件）`;
-    case 0:
-      return `${type.name}（函数组件）`;
-    case 6:
-      return `${pendingProps}（文本）`
-    default:
-      return type;
-  }
-}
+let logIndex = 0;
 
 export const log = (color: string, label: string, message?: any) => {
 	console.log(
-    `%c ${label} %c`,
+    `${logIndex++} %c ${label} %c`,
     `background-color: ${color}; color: #FFFFFF`,
     `background-color: inherit; color: inherit`
   , exist(message) ? message : '');

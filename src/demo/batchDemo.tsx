@@ -9,31 +9,30 @@ export default () => {
   const domRef = useRef({});
 
   const onClick = () => {
-    startTransition(() => {
-      updateCount(count => count + 1);
-      updateCount(count => count + 1);
-      updateCount(count => count + 1);
+    // startTransition(() => {
+    //   updateCount(count => count + 1);
+    //   updateCount(count => count + 1);
+    //   updateCount(count => count + 1);
 
-      console.log("同步的结果：", domRef.current.innerText);
-      Promise.resolve().then(() => {
-        console.log("微任务的结果：", domRef.current.innerText);
-      });
-      setTimeout(() => {
-        console.log("宏任务的结果：", domRef.current.innerText);
-      });
-    })
-    // updateCount(count => count + 1);
-    // updateCount(count => count + 1);
-    // updateCount(count => count + 1);
+    //   console.log("同步的结果：", domRef.current.innerText);
+    //   Promise.resolve().then(() => {
+    //     console.log("微任务的结果：", domRef.current.innerText);
+    //   });
+    //   setTimeout(() => {
+    //     console.log("宏任务的结果：", domRef.current.innerText);
+    //   });
+    // })
+    updateCount(count => count + 1);
+    updateCount(count => count + 1);
+    updateCount(count => count + 1);
 
-    // console.log("同步的结果：", domRef.current.innerText);
-    // Promise.resolve().then(() => {
-    //   console.log("微任务的结果：", domRef.current.innerText);
-    // });
-    // setTimeout(() => {
-    //   console.log("宏任务的结果：", domRef.current.innerText);
-    // });
-    
+    console.log("同步的结果：", domRef.current.innerText);
+    Promise.resolve().then(() => {
+      console.log("微任务的结果：", domRef.current.innerText);
+    });
+    setTimeout(() => {
+      console.log("宏任务的结果：", domRef.current.innerText);
+    });
   };
 
 

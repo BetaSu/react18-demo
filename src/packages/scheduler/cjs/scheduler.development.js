@@ -620,7 +620,9 @@ exports.unstable_runWithPriority = unstable_runWithPriority;
 exports.unstable_scheduleCallback = unstable_scheduleCallback;
 exports.unstable_shouldYield = shouldYieldToHost;
 exports.unstable_wrapCallback = unstable_wrapCallback;
-/*KaSong*/exports.from = 'src/packages';
+/*KaSong*/exports.KaSongHelper = {
+  from: 'src/packages'
+};
           /* global __REACT_DEVTOOLS_GLOBAL_HOOK__ */
 if (
   typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== 'undefined' &&

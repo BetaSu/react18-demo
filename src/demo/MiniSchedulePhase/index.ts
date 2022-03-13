@@ -38,7 +38,9 @@ const priority2Name = [
   'IdlePriority',
 ]
 
-
+/**
+ * schedule阶段的mini实现
+ */
 
 const root = document.querySelector('#root') as Element;
 const contentBox = document.querySelector('#content') as Element;

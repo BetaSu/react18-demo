@@ -16,7 +16,8 @@
     "jsx": "react",
     "types": ["react/next", "react-dom/next"],
     "paths": {
-      "log": ["./src/packages/log"]
+      "log": ["./src/packages/log"],
+      "react-cache": ["./src/packages/react-cache"]
     }
   },
   "include": ["./src"]
