@@ -126,7 +126,6 @@ function perform(work: Work, didTimeout?: boolean): any {
   if (newCallback && prevCallback === newCallback) {
     // callback没变，代表是同一个work，只不过时间切片时间用尽（5ms）
     // 返回的函数会被Scheduler继续调用
-    console.log('contin');
     return perform.bind(null, work);
   }
 }

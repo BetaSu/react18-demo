@@ -18,7 +18,7 @@ bindHook('completeWork', (current, wip) => {
 // 用于调试 Reconciler 工作流程的Demo
 const Cpn = () => {
   const [num, updateNum] = useState(0);
-  console.warn('ha');
+
   return (
     <div onClick={() => {
       updateNum(num + 1)

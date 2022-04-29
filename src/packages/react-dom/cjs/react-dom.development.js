@@ -14859,14 +14859,17 @@ function ChildReconciler(shouldTrackSideEffects) {
       if (oldIndex < lastPlacedIndex) {
         // This is a move.
         newFiber.flags |= Placement;
+        /*KaSong*/logHook('placeChild', 'move', newFiber, lastPlacedIndex);
         return lastPlacedIndex;
       } else {
         // This item can stay in place.
+        /*KaSong*/logHook('placeChild', 'stay', newFiber, oldIndex);
         return oldIndex;
       }
     } else {
       // This is an insertion.
       newFiber.flags |= Placement;
+      /*KaSong*/logHook('placeChild', 'insertion', newFiber, lastPlacedIndex);
       return lastPlacedIndex;
     }
   }

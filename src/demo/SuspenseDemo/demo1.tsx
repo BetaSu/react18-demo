@@ -1,6 +1,6 @@
 import React, { Suspense, useState, useEffect, useTransition } from "react";
 import {bindHook, getLibraryMethod, utils} from 'log';
-import mockData from './mockData.json';
+import {sleep, wrapPromise} from './utils';
 
 const {log, lanes2Str, COLOR: {SCHEDULE_COLOR, RENDER_COLOR, COMMIT_COLOR}} = utils;
 
@@ -36,30 +36,7 @@ bindHook('getNextLanes_entangledLanes', (lanes) => {
 
 
 
-const sleep = (durationMs: number) =>
-  new Promise<void>((resolve) => setTimeout(() => resolve(), durationMs));
-const wrapPromise = (promise: Promise<any>) => {
-  let result: {type: string, value: any};
-  promise.then(
-    (value) => {
-      result = { type: "success", value };
-    },
-    (value) => {
-      result = { type: "error", value };
-    }
-  );
-  return {
-    read() {
-      if (result === undefined) {
-        throw promise;
-      }
-      if (result.type === "error") {
-        throw result.value;
-      }
-      return result.value;
-    }
-  };
-};
+
 const createResource = (durationMs: number) => {
   return wrapPromise(sleep(durationMs).then(() => "FETCHED RESULT " + Math.ceil(Math.random() * 1000)));
 };
