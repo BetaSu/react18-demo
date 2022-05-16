@@ -5404,6 +5404,7 @@ function markStarvedLanesAsExpired(root, currentTime) {
     } else if (expirationTime <= currentTime) {
       // This lane expired
       root.expiredLanes |= lane;
+      /*KaSong*/logHook('expiredLanes', lane)
     }
 
     lanes &= ~lane;
@@ -26546,7 +26547,7 @@ function commitRootImpl(root, renderPriorityLevel) {
     var prevExecutionContext = executionContext;
     executionContext |= CommitContext; // Reset this to null before calling lifecycles
 
-    /*KaSong*/logHook('commitBegin', '有effect需要处理', root)
+    /*KaSong*/logHook('commitBegin', '有effect需要处理', lanes, root)
 
     ReactCurrentOwner$2.current = null; // The commit phase is broken into several sub-phases. We do a separate pass
     // of the effect list for each phase: all mutation effects come before all
@@ -26763,7 +26764,7 @@ function flushPassiveEffectsImpl() {
   var prevExecutionContext = executionContext;
   executionContext |= CommitContext;
 
-  /*KaSong*/logHook('commitBegin', '有PassiveEffect需要处理')
+  /*KaSong*/logHook('commitBegin', '有PassiveEffect需要处理', lanes, root);
 
   commitPassiveUnmountEffects(root.current);
   commitPassiveMountEffects(root, root.current); // TODO: Move to commitPassiveMountEffects

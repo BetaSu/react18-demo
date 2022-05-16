@@ -26,8 +26,8 @@ bindHook('performSyncWorkOnRoot-exitStatus', (exitStatus: number) => {
   log(RENDER_COLOR, 'perform Sync work 完成状态', exitStatus2Str(exitStatus));
 })
 
-bindHook('commitBegin', (reason) => {
-  log(COMMIT_COLOR, `commit阶段开始，由于：${reason}`);
+bindHook('commitBegin', (reason, lanes) => {
+  log(COMMIT_COLOR, `commit阶段开始，由于：${reason}， lanes：${lanes2Str(lanes)}`);
 })
 
 

@@ -13,6 +13,7 @@ import './globalLog';
 // import App from './demo/DiffDemo/v4';
 // import App from './demo/Performance/demo2';
 import App from './demo/UseEffectDemo';
+// import App from './demo/TransitionDemo/demo3';
 
 
 const rootEle = document.getElementById('root');
@@ -20,7 +21,9 @@ const rootEle = document.getElementById('root');
 // import './demo/MiniUpdate2State';
 // import './demo/MiniDiff';
 // import './demo/MiniUseState';
+// import './demo/MiniSchedulePhase';
 
 rootEle && ReactDOM.createRoot(rootEle).render(<App/>);
 // ReactDOM.render(<App/> , rootEle)
 
+  

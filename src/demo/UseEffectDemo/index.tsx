@@ -2,6 +2,7 @@ import React, { useCallback, useState, useMemo,useRef, useEffect, useLayoutEffec
 
 function Effect1() {
   const [state,setState] = useState(0);
+  
   useEffect(function create1 () {
     console.log('effect1 mount')
     return () => {
@@ -22,10 +23,11 @@ function Effect2(){
   });  
 
   useLayoutEffect(function create22 () {
-    console.log('effect22 mount')
+    console.log('effect22 layout mount')
+    // throw 1;
     return () => {
       // 清除订阅
-      console.log('effect22 unmount')
+      console.log('effect22 layout unmount')
     };
   });
 
