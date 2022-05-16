@@ -31,19 +31,13 @@ bindHook('ErrorUpdate on Root', (phase: Phase, update, fiber) => {
 })  
 
 
-
-
-
-// 用于调试 commit阶段 工作流程的Demo
 export default () => {
   const [num, updateNum] = useState(0);
 
   return (
     <div onClick={() => updateNum(num + 1)} style={{color: `#${num}${num}${num}`}} title={num + ''}>
       <ErrorBoundary>
-        <div>
-          <SomeFunctionComponent/>
-        </div>
+        <SomeFunctionComponent/>
       </ErrorBoundary>
     </div>
   )
