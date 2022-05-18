@@ -15966,6 +15966,7 @@ var Layout =
 var Passive$1 =
 /*   */
 8;
+var ErrorEffect = 16;
 
 // and should be reset before starting a new render.
 // This tracks which mutable sources need to be reset after a render.
@@ -16206,8 +16207,13 @@ function renderWithHooks(current, workInProgress, Component, props, secondArg, n
     }
   }
 
-  var children = Component(props, secondArg); // Check if there was a render phase update
+  const didCaptureError = (workInProgress.flags & DidCapture) !== NoFlags;
+  let children = Component(props, secondArg); 
+  if (didCaptureError) {
+    children = null;
+  } 
 
+  // Check if there was a render phase update
   if (didScheduleRenderPhaseUpdateDuringThisPass) {
     // Keep rendering in a loop for as long as render phase updates continue to
     // be scheduled. Use a counter to prevent infinite loops.
@@ -16874,6 +16880,35 @@ function forceStoreRerender(fiber) {
   scheduleUpdateOnFiber(fiber, SyncLane, NoTimestamp);
 }
 
+function mountErrorBoundary(callback) {
+  const hook = mountWorkInProgressHook();
+  const errorRef = mountRef(null);
+  mountState();
+  currentlyRenderingFiber$1.flags |= Update;
+
+  const errorInstance = errorRef.current;
+  // const captureError = currentlyRenderingFiber$1.flags & DidCapture ? HasEffect : NoFlags;
+  const captureError = errorInstance ? HasEffect : NoFlags;
+  hook.memoizedState = pushEffect(ErrorEffect | captureError, () => {
+    callback.call(null, errorInstance);
+    errorRef.current = null;
+  }, null, errorRef, null);
+}
+
+function updateErrorBoundary(callback) {
+  const hook = updateWorkInProgressHook();
+  const errorRef = updateRef(null);
+  updateState();
+  currentlyRenderingFiber$1.flags |= Update;  
+
+  const errorInstance = errorRef.current;
+  const captureError = errorRef.current ? HasEffect : NoFlags;
+  hook.memoizedState = pushEffect(ErrorEffect | captureError, () => {
+    callback.call(null, errorInstance);
+    errorRef.current = null;
+  }, null, errorRef, null);
+}
+
 function mountState(initialState) {
   var hook = mountWorkInProgressHook();
 
@@ -17518,6 +17553,11 @@ var InvalidNestedHooksDispatcherOnRerenderInDEV = null;
   };
 
   HooksDispatcherOnMountInDEV = {
+    useErrorBoundary: function (callback) {
+      currentHookNameInDev = 'useErrorBoundary';
+      mountHookTypesDev();
+      return mountErrorBoundary(callback);
+    },
     readContext: function (context) {
       return readContext(context);
     },
@@ -17740,6 +17780,11 @@ var InvalidNestedHooksDispatcherOnRerenderInDEV = null;
   };
 
   HooksDispatcherOnUpdateInDEV = {
+    useErrorBoundary: function (callback) {
+      currentHookNameInDev = 'useErrorBoundary';
+      updateHookTypesDev();
+      return updateErrorBoundary(callback);
+    },
     readContext: function (context) {
       return readContext(context);
     },
@@ -18954,6 +18999,32 @@ function throwException(root, returnFiber, sourceFiber, value, rootRenderLanes) 
 
   do {
     switch (workInProgress.tag) {
+      case FunctionComponent:
+      case ForwardRef:
+      case SimpleMemoComponent:
+        {
+          if ((workInProgress.flags & DidCapture) === NoFlags && workInProgress.updateQueue) {
+            // 寻找 useErrorBoundary，附加HasEffect tag
+            const lastEffect = workInProgress.updateQueue.lastEffect;
+            let curEffect = lastEffect;
+            let hasErrorBoundary = false;
+            do {
+              if (curEffect.tag & ErrorEffect) {
+                // 是useErrorBoundary
+                curEffect.deps.current = value.value;
+                hasErrorBoundary = true; 
+              }
+              curEffect = curEffect.next;
+            } while (curEffect !== lastEffect)
+            
+            if (hasErrorBoundary) {
+              // ShouldCapture在 unwindWork 中会将 ErrorBoundary 赋值给wip，从ErrorBoundary继续render阶段
+              workInProgress.flags |= ShouldCapture;
+              return;
+            }
+          }
+          break;
+        }
       case HostRoot:
         {
           var _errorInfo = value;
@@ -22459,6 +22530,19 @@ function unwindWork(workInProgress, renderLanes) {
   popTreeContext(workInProgress);
 
   switch (workInProgress.tag) {
+    case FunctionComponent:
+    case ForwardRef:
+    case SimpleMemoComponent:
+      {
+        const flags = workInProgress.flags;
+
+        if (flags & ShouldCapture) {
+          workInProgress.flags = flags & ~ShouldCapture | DidCapture;
+          return workInProgress;
+        }
+
+        return null;
+      }
     case ClassComponent:
       {
         var Component = workInProgress.type;
@@ -23066,7 +23150,7 @@ function commitLayoutEffectOnFiber(finishedRoot, current, finishedWork, committe
               commitHookEffectListMount(Layout | HasEffect, finishedWork);
             }
           }
-
+          commitHookEffectListMount(ErrorEffect | HasEffect, finishedWork);
           break;
         }
 
@@ -24689,7 +24773,7 @@ function commitPassiveMountOnFiber(finishedRoot, finishedWork) {
         } else {
           commitHookEffectListMount(Passive$1 | HasEffect, finishedWork);
         }
-
+        // sumark
         break;
       }
   }
@@ -26876,6 +26960,51 @@ function captureCommitPhaseError(sourceFiber, nearestMountedAncestor, error$1) {
         }
 
         return;
+      }
+    } else if (
+      fiber.tag === FunctionComponent ||
+      fiber.tag === ForwardRef ||
+      fiber.tag === SimpleMemoComponent
+    ) {
+      if (fiber.updateQueue) {
+        const lastEffect = fiber.updateQueue.lastEffect;
+        let curEffect = lastEffect;
+        let hasErrorBoundary = false;
+        
+
+        do {
+          if (curEffect.tag & ErrorEffect) {
+            // 是useErrorBoundary
+            curEffect.deps.current = error$1;
+            fiber.flags |= DidCapture;
+            hasErrorBoundary = true; 
+          }
+          curEffect = curEffect.next;
+        } while (curEffect !== lastEffect)
+        
+        if (hasErrorBoundary) {
+          runWithPriority(DiscreteEventPriority, () => {
+            // 第一个hook
+            let curHook = fiber.memoizedState;
+            let errorEffectUpdateQueue;
+            while (curHook) {
+              // hook保存的数据
+              const hookMemoizedState = curHook.memoizedState;
+              if (hookMemoizedState && hookMemoizedState.tag & ErrorEffect) {
+                // 第一个useErrorBoundary，next为useRef，next.next为useState
+                errorEffectUpdateQueue = curHook.next.next.queue;
+                break;
+              }
+              curHook = curHook.next;
+            }
+            if (errorEffectUpdateQueue) {
+              dispatchSetState(fiber, errorEffectUpdateQueue, count => count + 1);
+            } else {
+              throw Error('useErrorBoundary结构定义出错')
+            }
+          })
+          return;
+        }
       }
     }
 

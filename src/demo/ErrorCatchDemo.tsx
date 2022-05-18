@@ -1,5 +1,5 @@
 import React, {useState, Component, useLayoutEffect} from 'react';
-import {bindHook, utils, Phase} from 'log';
+import {bindHook, utils, Phase, getLibraryMethod} from 'log';
 
 const {log, getPhaseFromExecutionContext, COLOR: {SCHEDULE_COLOR, RENDER_COLOR, COMMIT_COLOR, USERSPACE_COLOR}} = utils;
 
@@ -9,6 +9,14 @@ const phaseName2Color = {
   render: RENDER_COLOR,
   noop: USERSPACE_COLOR
 }
+
+bindHook('beginWork', (current, wip) => {
+  log(RENDER_COLOR, `beginWork`, getLibraryMethod('getComponentNameFromFiber')?.(wip));
+}) 
+
+bindHook('completeWork', (current, wip) => {
+  log(RENDER_COLOR, `completeWork`, getLibraryMethod('getComponentNameFromFiber')?.(wip));
+}) 
 
 bindHook('createClassErrorUpdate', (fnName, executionContext, fiber, update) => {
   log(phaseName2Color[getPhaseFromExecutionContext(executionContext)], `由于${fnName}，在ClassComponent创建ErrorUpdate`, fiber);
@@ -51,7 +59,8 @@ export default () => {
 
 class ErrorBoundary extends Component {
   state = {
-    hasError: false
+    hasError: false,
+    num: 0
   }
   // static getDerivedStateFromError() {
   //   console.log('in');
@@ -60,13 +69,14 @@ class ErrorBoundary extends Component {
   //   };
   // }
   // 试试注释componentDidCatch，观察错误冒泡到Root处理的情况
-  componentDidCatch() {
-    console.warn('catch error in componentDidCatch');
+  componentDidCatch(e: Error) {
+    console.warn('catch error in componentDidCatch', e);
+    this.setState({hasError: true})
   }
   render() {
 
     if (this.state.hasError) {
-      return <div>Error !</div>;
+      return <div onClick={() => this.setState({num: this.state.num + 1})}>Error ! {this.state.num}</div>;
     }
 
     return <div>{this.props.children}</div>;
@@ -74,13 +84,14 @@ class ErrorBoundary extends Component {
 }
 
 function SomeFunctionComponent() {
-  useLayoutEffect(() => {
-    // commit阶段抛出错误
-    throw new Error("Error!");
-  }, [])
+  // useLayoutEffect(() => {
+  //   // commit阶段抛出错误
+  //   throw new Error("Error!");
+  // }, [])
 
   // render阶段抛出错误
-  // throw new Error("Error!");
+  console.warn('尝试render SomeFunctionComponent');
+  throw new Error("Error!");
   return <p>some function component</p>;
 }
 

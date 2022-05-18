@@ -1642,6 +1642,10 @@ function useContext(Context) {
 
   return dispatcher.useContext(Context);
 }
+function useErrorBoundary(callback) {
+  var dispatcher = resolveDispatcher();
+  return dispatcher.useErrorBoundary(callback);
+} 
 function useState(initialState) {
   var dispatcher = resolveDispatcher();
   return dispatcher.useState(initialState);
@@ -2760,12 +2764,10 @@ exports.useMemo = useMemo;
 exports.useReducer = useReducer;
 exports.useRef = useRef;
 exports.useState = useState;
+exports.useErrorBoundary = useErrorBoundary;
 exports.useSyncExternalStore = useSyncExternalStore;
 exports.useTransition = useTransition;
 exports.version = ReactVersion;
-/*KaSong*/exports.KaSongHelper = {
-  from: 'src/packages'
-};
           /* global __REACT_DEVTOOLS_GLOBAL_HOOK__ */
 if (
   typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== 'undefined' &&
