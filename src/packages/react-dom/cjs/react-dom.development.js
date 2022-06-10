@@ -17333,6 +17333,7 @@ function dispatchReducerAction(fiber, queue, action) {
     if (typeof arguments[3] === 'function') {
       error("State updates from the useState() and useReducer() Hooks don't support the " + 'second callback argument. To execute a side effect after ' + 'rendering, declare it in the component body with useEffect().');
     }
+    
   }
 
   var lane = requestUpdateLane(fiber);
@@ -24785,7 +24786,6 @@ function commitPassiveMountOnFiber(finishedRoot, finishedWork) {
         } else {
           commitHookEffectListMount(Passive$1 | HasEffect, finishedWork);
         }
-        // sumark
         break;
       }
   }
