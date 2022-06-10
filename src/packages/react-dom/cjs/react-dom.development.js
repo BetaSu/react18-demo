@@ -16882,31 +16882,29 @@ function forceStoreRerender(fiber) {
 
 function mountErrorBoundary(callback) {
   const hook = mountWorkInProgressHook();
-  const errorRef = mountRef(null);
   mountState();
-  currentlyRenderingFiber$1.flags |= Update;
+  const wip = currentlyRenderingFiber$1;
+  wip.flags |= Update;
+  const capturedErrorInstance = wip.capturedErrorInstance;
+  const captureError = capturedErrorInstance ? HasEffect : NoFlags;
 
-  const errorInstance = errorRef.current;
-  // const captureError = currentlyRenderingFiber$1.flags & DidCapture ? HasEffect : NoFlags;
-  const captureError = errorInstance ? HasEffect : NoFlags;
   hook.memoizedState = pushEffect(ErrorEffect | captureError, () => {
-    callback.call(null, errorInstance);
-    errorRef.current = null;
-  }, null, errorRef, null);
+    callback.call(null, capturedErrorInstance);
+    wip.capturedErrorInstance = null;
+  }, null, null);
 }
 
 function updateErrorBoundary(callback) {
   const hook = updateWorkInProgressHook();
-  const errorRef = updateRef(null);
-  updateState();
-  currentlyRenderingFiber$1.flags |= Update;  
+  const [errorInstance, update] = updateState();
+  currentlyRenderingFiber$1.flags |= Update; 
+  
+  const captureError = errorInstance ? HasEffect : NoFlags;
 
-  const errorInstance = errorRef.current;
-  const captureError = errorRef.current ? HasEffect : NoFlags;
   hook.memoizedState = pushEffect(ErrorEffect | captureError, () => {
     callback.call(null, errorInstance);
-    errorRef.current = null;
-  }, null, errorRef, null);
+    update(null);
+  }, null, null);
 }
 
 function mountState(initialState) {
@@ -17367,7 +17365,6 @@ function dispatchSetState(fiber, queue, action) {
       error("State updates from the useState() and useReducer() Hooks don't support the " + 'second callback argument. To execute a side effect after ' + 'rendering, declare it in the component body with useEffect().');
     }
   }
-
   var lane = requestUpdateLane(fiber);
   var update = {
     lane: lane,
@@ -19003,23 +19000,38 @@ function throwException(root, returnFiber, sourceFiber, value, rootRenderLanes) 
       case ForwardRef:
       case SimpleMemoComponent:
         {
-          if ((workInProgress.flags & DidCapture) === NoFlags && workInProgress.updateQueue) {
-            // 寻找 useErrorBoundary，附加HasEffect tag
-            const lastEffect = workInProgress.updateQueue.lastEffect;
-            let curEffect = lastEffect;
+          if ((workInProgress.flags & DidCapture) === NoFlags) {
             let hasErrorBoundary = false;
-            do {
-              if (curEffect.tag & ErrorEffect) {
-                // 是useErrorBoundary
-                curEffect.deps.current = value.value;
-                hasErrorBoundary = true; 
+            // 错误信息
+            const errorInstance = value.value;
+
+            // 寻找 useErrorBoundary
+            findErrorBoundary(workInProgress, (queue) => {
+              hasErrorBoundary = true;
+              const update = {
+                lane: SyncLane,
+                action: errorInstance,
+                hasEagerState: false,
+                eagerState: null,
+                next: null
+              };
+              if (isRenderPhaseUpdate(workInProgress)) {
+                enqueueRenderPhaseUpdate(queue, update);
+              } else {
+                enqueueUpdate$1(workInProgress, queue, update);
               }
-              curEffect = curEffect.next;
-            } while (curEffect !== lastEffect)
+            })
             
             if (hasErrorBoundary) {
               // ShouldCapture在 unwindWork 中会将 ErrorBoundary 赋值给wip，从ErrorBoundary继续render阶段
               workInProgress.flags |= ShouldCapture;
+              workInProgress.capturedErrorInstance = errorInstance;
+
+              const eventTime = requestEventTime();
+              const root = markUpdateLaneFromFiberToRoot(workInProgress, SyncLane);
+              if (root !== null) {
+                markRootUpdated(root, SyncLane, eventTime);
+              }
               return;
             }
           }
@@ -26463,6 +26475,7 @@ function completeUnitOfWork(unitOfWork) {
       // capture values if possible.
       var _next = unwindWork(completedWork); // Because this fiber did not complete, don't reset its lanes.
 
+      /*KaSong*/logHook('unwindWork', completedWork, _next)
 
       if (_next !== null) {
         // If completing this work spawned new work, do that next. We'll come
@@ -26966,48 +26979,20 @@ function captureCommitPhaseError(sourceFiber, nearestMountedAncestor, error$1) {
       fiber.tag === ForwardRef ||
       fiber.tag === SimpleMemoComponent
     ) {
-      if (fiber.updateQueue) {
-        const lastEffect = fiber.updateQueue.lastEffect;
-        let curEffect = lastEffect;
-        let hasErrorBoundary = false;
+      let hasErrorBoundary = false;
+      // 寻找 useErrorBoundary
+      findErrorBoundary(fiber, (queue) => {
+        hasErrorBoundary = true;
+        runWithPriority(DiscreteEventPriority, () => {
+          dispatchSetState(fiber, queue, error$1);
+        })
+      })
+      
+      if (hasErrorBoundary) {
         
-
-        do {
-          if (curEffect.tag & ErrorEffect) {
-            // 是useErrorBoundary
-            curEffect.deps.current = error$1;
-            fiber.flags |= DidCapture;
-            hasErrorBoundary = true; 
-          }
-          curEffect = curEffect.next;
-        } while (curEffect !== lastEffect)
-        
-        if (hasErrorBoundary) {
-          runWithPriority(DiscreteEventPriority, () => {
-            // 第一个hook
-            let curHook = fiber.memoizedState;
-            let errorEffectUpdateQueue;
-            while (curHook) {
-              // hook保存的数据
-              const hookMemoizedState = curHook.memoizedState;
-              if (hookMemoizedState && hookMemoizedState.tag & ErrorEffect) {
-                // 第一个useErrorBoundary，next为useRef，next.next为useState
-                errorEffectUpdateQueue = curHook.next.next.queue;
-                break;
-              }
-              curHook = curHook.next;
-            }
-            if (errorEffectUpdateQueue) {
-              dispatchSetState(fiber, errorEffectUpdateQueue, count => count + 1);
-            } else {
-              throw Error('useErrorBoundary结构定义出错')
-            }
-          })
-          return;
-        }
+        return;
       }
     }
-
     fiber = fiber.return;
   }
 
@@ -27020,6 +27005,26 @@ function captureCommitPhaseError(sourceFiber, nearestMountedAncestor, error$1) {
     error('Internal React error: Attempted to capture a commit phase error ' + 'inside a detached tree. This indicates a bug in React. Likely ' + 'causes include deleting the same fiber more than once, committing an ' + 'already-finished tree, or an inconsistent return pointer.\n\n' + 'Error message:\n\n%s', error$1);
   }
 }
+
+function findErrorBoundary(workInProgress, callback) {
+  // 第一个hook
+  let hook = workInProgress.memoizedState;
+
+  while (hook) {
+    // hook保存的数据
+    const hookMemoizedState = hook.memoizedState;
+    if (hookMemoizedState && hookMemoizedState.tag & ErrorEffect) {
+      const errorEffectUpdateQueue = hook.next.queue;
+      if (errorEffectUpdateQueue) {
+        callback(errorEffectUpdateQueue);
+      } else {
+        throw Error('useErrorBoundary结构定义出错')
+      }      
+    }
+    hook = hook.next;
+  }
+}
+
 function pingSuspendedRoot(root, wakeable, pingedLanes) {
   var pingCache = root.pingCache;
 
@@ -27896,6 +27901,8 @@ function FiberNode(tag, pendingProps, key, mode) {
   this.lanes = NoLanes;
   this.childLanes = NoLanes;
   this.alternate = null;
+
+  this.capturedErrorInstance = null;
 
   {
     // Note: The following is done to avoid a v8 performance cliff.
